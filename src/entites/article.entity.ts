@@ -22,9 +22,9 @@ export class Article extends BaseEntity {
     @DeleteDateColumn()
     deteledAt: Date;
 
-    @OneToMany(() => Comment, (comment) => comment.Article)
+    @OneToMany(() => Comment, (comment) => comment.Article, { onDelete: 'CASCADE' })
     Comment: Comment[];
 
-    @ManyToOne(()=> User, (user) => user.Article)
+    @ManyToOne(() => User, (user) => user.Article)
     User: User;
 }

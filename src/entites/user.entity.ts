@@ -75,9 +75,9 @@ export class User extends BaseEntity {
     @DeleteDateColumn()
     deletedAt: Date;
 
-    @OneToMany(() => Article, (article) => article.User)
+    @OneToMany(() => Article, (article) => article.User, { onDelete: 'CASCADE' })
     Article: Article[];
 
-    @OneToMany(() => Comment, (comment) => comment.User)
+    @OneToMany(() => Comment, (comment) => comment.User, { onDelete: 'CASCADE' })
     Comment: Comment[];
 }

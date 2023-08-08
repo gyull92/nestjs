@@ -7,7 +7,9 @@ import { Repository } from 'typeorm';
 export class CommentService {
     constructor(@InjectRepository(Comment) private readonly commentRepository: Repository<Comment>) { }
 
-    async createComment(userId, articleId, content) {
+    async createComment(req, articleId, content) {
+        const userId = req.user.userId;
+        console.log(req.user)
         try {
             return await this.commentRepository
                 .createQueryBuilder()
@@ -21,7 +23,9 @@ export class CommentService {
         }
     }
 
-    async updateComment(userId, commentId, content) {
+    async updateComment(req, commentId, content) {
+        const userId = req.user.userId;
+
         try {
             return await this.commentRepository
                 .createQueryBuilder()
@@ -36,7 +40,9 @@ export class CommentService {
         }
     }
 
-    async deleteComment(userId, commentId) {
+    async deleteComment(req, commentId) {
+        const userId = req.user.userId;
+
         try {
             return await this.commentRepository
                 .createQueryBuilder()
