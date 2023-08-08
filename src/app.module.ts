@@ -8,6 +8,9 @@ import { TypeOrmConfigService } from './config/typeorm.config.service';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtConfigService } from './config/jwt.config';
+import { ArticleModule } from './article/article.module';
+import { CommentModule } from './comment/comment.module';
+import { JwtStrategy } from './auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -24,8 +27,10 @@ import { JwtConfigService } from './config/jwt.config';
     }),
     UserModule,
     AuthModule,
+    ArticleModule,
+    CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule { }

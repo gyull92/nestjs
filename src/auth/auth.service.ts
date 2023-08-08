@@ -9,13 +9,12 @@ export class AuthService {
 
     async signIn(email, pass) {
         const userData = await this.userService.signIn(email);
-        const isMatch = await bcrypt.compare(userData.password, pass);
+        const isMatch = await bcrypt.compare(pass, userData.password);
+        
         if (!isMatch) {
             throw new UnauthorizedException('email 혹은 비밀번호가 틀립니다');
         }
-        console.log(654654)
-        const payload = { sub: userData.id, username: userData.name };
-        console.log(payload,"paylo")
+        const payload = { userId: userData.id, username: userData.name };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };

@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique } from "typeorm";
+import { IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique, OneToMany } from "typeorm";
+import { Article } from "./article.entity";
+import { Comment } from "./comment.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -34,9 +36,9 @@ export class User extends BaseEntity {
         example: '01012341234',
         description: '유저 연락처'
     })
-    @IsNumber()
+    @IsString()
     @Column({ unique: true })
-    phone: number;
+    phone: string;
 
     @ApiProperty({
         example: '부산광역시 사하구 신평동',
@@ -50,7 +52,8 @@ export class User extends BaseEntity {
         example: 'asd@naver.com',
         description: '유저 이메일'
     })
-    @IsString()
+    @IsEmail()
+    @IsNotEmpty()
     @Column({ unique: true })
     email: string;
 
@@ -71,4 +74,10 @@ export class User extends BaseEntity {
 
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @OneToMany(() => Article, (article) => article.User)
+    Article: Article[];
+
+    @OneToMany(() => Comment, (comment) => comment.User)
+    Comment: Comment[];
 }

@@ -14,12 +14,64 @@ export class UserService {
         const { name, password, phone, address, email, nickname } = userInfo;
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log(name, hashedPassword, phone, address, email, nickname)
+
         try {
-            await this.userRepository.insert({ name, password: hashedPassword, phone, address, email, nickname });
+            return await this.userRepository
+                .createQueryBuilder()
+                .insert()
+                .into(User)
+                .values({ name: name, password: hashedPassword, phone: phone, address: address, email: email, nickname: nickname })
+                .execute();
         } catch (e) {
+            console.log(e);
             throw new ConflictException('이미 가입된 번호이거나 email입니다.');
-            console.log(e)
+        }
+    }
+
+    async updateUser(req, userId, userInfo) {
+        const { name, phone, address, email, nickname } = userInfo;
+
+        try {
+            return await this.userRepository
+                .createQueryBuilder()
+                .update(User)
+                .set({ name: name, phone: phone, address: address, email: email, nickname: nickname })
+                .where('id = :userId', { userId: userId })
+                .execute();
+        } catch (e) {
+            console.log(e);
+            throw new UnauthorizedException();
+        }
+    }
+
+    async changePassword(userId, password) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        try {
+            return await this.userRepository
+                .createQueryBuilder()
+                .update(User)
+                .set({ password: hashedPassword })
+                .where('id = :userId', { userId: userId })
+                .execute();
+        } catch (e) {
+            console.log(e);
+            throw new UnauthorizedException();
+        }
+    }
+
+    async withdrawal(userId) {
+        try {
+            return await this.userRepository
+                .createQueryBuilder()
+                .delete()
+                .from(User)
+                .where('id = :userId', { userId: userId })
+                .execute()
+        } catch (e) {
+            console.log(e);
+            throw new UnauthorizedException();
         }
     }
 
