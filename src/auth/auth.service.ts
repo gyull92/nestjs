@@ -10,7 +10,7 @@ export class AuthService {
     async signIn(email, pass) {
         const userData = await this.userService.signIn(email);
         const isMatch = await bcrypt.compare(pass, userData.password);
-        
+
         if (!isMatch) {
             throw new UnauthorizedException('email 혹은 비밀번호가 틀립니다');
         }

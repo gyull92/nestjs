@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from 'src/entites/user.entity';
 import { Repository } from 'typeorm';
@@ -24,11 +24,12 @@ export class UserService {
                 .execute();
         } catch (e) {
             console.log(e);
-            throw new ConflictException('이미 가입된 번호이거나 email입니다.');
+            throw new UnauthorizedException('이미 가입된 번호이거나 email입니다.');
         }
     }
 
-    async updateUser(req, userId, userInfo) {
+    async updateUser(req, userInfo) {
+        const userId = req.user.userId;
         const { name, phone, address, email, nickname } = userInfo;
 
         try {
@@ -44,7 +45,8 @@ export class UserService {
         }
     }
 
-    async changePassword(userId, password) {
+    async changePassword(req, password) {
+        const userId = req.user.userId
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -61,14 +63,16 @@ export class UserService {
         }
     }
 
-    async withdrawal(userId) {
+    async withdrawal(req) {
+        const userId = req.user.userId;
+
         try {
             return await this.userRepository
                 .createQueryBuilder()
                 .delete()
                 .from(User)
                 .where('id = :userId', { userId: userId })
-                .execute()
+                .execute();
         } catch (e) {
             console.log(e);
             throw new UnauthorizedException();
@@ -77,6 +81,7 @@ export class UserService {
 
     async signIn(email) {
         const userData = await this.userRepository.findOne({ where: { email: email } });
-        return userData
+
+        return userData;
     }
 }

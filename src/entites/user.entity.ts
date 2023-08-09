@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique, OneToMany } from "typeorm";
+import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique, OneToMany, OneToOne, ManyToOne } from "typeorm";
 import { Article } from "./article.entity";
 import { Comment } from "./comment.entity";
+import { Profile } from "./profile.entity";
+import { TermsOfUse } from "./termsofuse.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -80,4 +82,10 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Comment, (comment) => comment.User, { onDelete: 'CASCADE' })
     Comment: Comment[];
+
+    @OneToOne(() => Profile, (profile) => profile.User, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    Profile: Profile;
+
+    @OneToMany(() => TermsOfUse, (termsofuse) => termsofuse.User, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    TermsOfUse: TermsOfUse[];
 }

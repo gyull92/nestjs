@@ -11,6 +11,9 @@ import { JwtConfigService } from './config/jwt.config';
 import { ArticleModule } from './article/article.module';
 import { CommentModule } from './comment/comment.module';
 import { JwtStrategy } from './auth/strategy/jwt.strategy';
+import { ProfileModule } from './profile/profile.module';
+import { TermsofuseController } from './termsofuse/termsofuse.controller';
+import { TermsofuseModule } from './termsofuse/termsofuse.module';
 
 @Module({
   imports: [
@@ -29,6 +32,8 @@ import { JwtStrategy } from './auth/strategy/jwt.strategy';
     AuthModule,
     ArticleModule,
     CommentModule,
+    ProfileModule,
+    TermsofuseModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
