@@ -78,7 +78,7 @@ export class BuyProductHandler {
         .createQueryBuilder()
         .select(['products.price', 'products.sellerId'])
         .from(Product, 'products')
-        .where('products.id = :id', { id: productId })
+        .where('products.id = :productId', { productId })
         .getOne();
     } catch (e) {
       console.log(e);
@@ -92,7 +92,7 @@ export class BuyProductHandler {
         .createQueryBuilder()
         .select('users')
         .from(User, 'users')
-        .where({ id: userId })
+        .where('users.id = :userId', { userId })
         .getOne();
     } catch (e) {
       console.log(e);

@@ -23,7 +23,7 @@ export class PasswordChangeHandler {
         .createQueryBuilder()
         .update(User)
         .set({ password: hashedPaaword })
-        .where('id = :userId', { userId: userId })
+        .where('id = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('비밀번호 변경 실패');

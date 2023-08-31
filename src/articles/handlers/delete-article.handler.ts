@@ -19,8 +19,8 @@ export class DeleteArticleHandler {
         .createQueryBuilder()
         .delete()
         .from(Article)
-        .where({ id: articleId })
-        .andWhere({ userId: userId })
+        .where('id = :articleId', { articleId })
+        .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('게시글 삭제에 실패하였습니다');

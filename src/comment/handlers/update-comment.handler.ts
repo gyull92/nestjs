@@ -20,9 +20,9 @@ export class UpdateCommentHandler {
         .createQueryBuilder()
         .update(Comment)
         .set({ content: content })
-        .where({ userId: userId })
-        .andWhere({ articleId: articleId })
-        .andWhere({ id: commentId })
+        .where('userId = :userId', { userId })
+        .andWhere('articleId = :articleId', { articleId })
+        .andWhere('id = :commentId', { commentId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('댓글 수정에 실패하였습니다');

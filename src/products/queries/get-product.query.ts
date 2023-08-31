@@ -20,7 +20,7 @@ export class GetProductHandler {
         .createQueryBuilder()
         .select('products')
         .from(Product, 'products')
-        .where({ id: productId })
+        .where('id = :productId', { productId })
         .getOne();
     } catch (e) {
       throw new UnauthorizedException('상품 조회 실패');

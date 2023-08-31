@@ -14,13 +14,13 @@ export class SalesListHandler {
 
   async execute(command: SalesListCommand) {
     const { userId } = command;
-    
+
     try {
       return await this.salesRepository
         .createQueryBuilder()
         .select('sale')
         .from(Sales, 'sale')
-        .where({ sellerId: userId })
+        .where('sale.sellerId = :userId', { userId })
         .getMany();
     } catch (e) {
       console.log(e);

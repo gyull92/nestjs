@@ -20,8 +20,8 @@ export class DeleteProductHandler {
         .createQueryBuilder()
         .delete()
         .from(Product)
-        .where('id = :id', { id: productId })
-        .andWhere('userId = :userId', { userId: userId })
+        .where('id = :productId', { productId })
+        .andWhere('sellerId = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('상품 삭제 실패');

@@ -12,12 +12,11 @@ import { Product } from 'src/entities/product.entity';
 import { User } from 'src/entities/users.entity';
 import { MyProductListHandler } from './qureies/my-sale-list.query';
 import { SaleItemDetailHandler } from './qureies/sale-item-detail.query';
-import { Review } from 'src/entities/review.entity';
 
 @Module({
   imports: [
     CqrsModule,
-    TypeOrmModule.forFeature([Sales, Product, User, Review]),
+    TypeOrmModule.forFeature([Sales, Product, User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useClass: jwtConfigService,

@@ -20,7 +20,7 @@ export class GetProfileHandler {
         .createQueryBuilder()
         .select('users.userId, users.name, users.phone, users.address')
         .from(User, 'users')
-        .where('users.id = :userId', { userId: userId })
+        .where('users.id = :userId', { userId })
         .getRawOne();
     } catch (e) {
       throw new UnauthorizedException('프로필 조회 실패');

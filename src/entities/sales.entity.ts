@@ -7,6 +7,8 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -41,15 +43,15 @@ export class Sales extends BaseEntity {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToMany(() => User, (user) => user.Sales)
+  @ManyToOne(() => User, (user) => user.Sales)
   @JoinColumn({ name: 'consumerId', referencedColumnName: 'id' })
   Consumer: User[];
 
-  @ManyToMany(() => Product, (product) => product.Sales)
-  @JoinTable()
+  @ManyToOne(() => Product, (product) => product.Sales)
+  @JoinColumn({ name: 'productId', referencedColumnName: 'id' })
   Product: Product[];
 
-  @OneToOne(() => Review, (review) => review.Sales, { cascade: true })
-  @JoinTable()
+  @OneToOne(() => Review, (review) => review.Sales)
+  @JoinColumn({ name: 'reviewId', referencedColumnName: 'id' })
   Review: Review;
 }

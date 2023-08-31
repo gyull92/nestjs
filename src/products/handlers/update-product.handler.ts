@@ -20,10 +20,11 @@ export class UpdateProductHandler {
         .createQueryBuilder()
         .update(Product)
         .set({ name: name, content: content, price: price })
-        .where({ id: productId })
-        .andWhere({ userId: userId })
+        .where('id = :productId', { productId })
+        .andWhere('sellerId = :userId ', { userId })
         .execute();
     } catch (e) {
+      console.log(e);
       throw new UnauthorizedException('상품 수정 실패');
     }
   }

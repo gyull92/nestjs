@@ -38,7 +38,7 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   role: number;
 
-  @Column({ default: 0 })
+  @Column({ default: 30000 })
   point: number;
 
   @CreateDateColumn()
@@ -62,6 +62,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Review, (review) => review.User)
   Review: Review[];
 
-  @ManyToMany(() => Sales, (sales) => sales.Consumer)
+  @OneToMany(() => Sales, (sales) => sales.Consumer)
   Sales: Sales[];
 }

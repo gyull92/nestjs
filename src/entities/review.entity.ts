@@ -25,10 +25,10 @@ export class Review extends BaseEntity {
   @Column()
   star: number;
 
-  @Column()
+  @Column({ default: null })
   userId: number;
 
-  @Column()
+  @Column({ default: null })
   productId: number;
 
   @Column({ default: null })

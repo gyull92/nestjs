@@ -18,45 +18,56 @@ export class CreateReviewHandler {
 
   async execute(command: CreateReviewCommand) {
     const { userId, productId, salesId, content, star } = command;
-    const insertResult = await this.reviewInsert(
-      userId,
-      productId,
-      salesId,
-      content,
-      star,
-    );
-    const reviewId = insertResult.identifiers[0].id;
+    const reviewFind = await this.reviewFind(salesId, userId, productId);
+
+    if (reviewFind.reviewId == null) {
+      try {
+        return await this.reviewRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Review)
+          .values({
+            content: content,
+            star: star,
+            salesId: salesId,
+            productId: productId,
+            userId: userId,
+          })
+          .execute();
+      } catch (e) {
+        console.log(e);
+        throw new UnauthorizedException();
+      }
+    } else {
+      throw new UnauthorizedException('이미 리뷰룰 작성하였습니다');
+    }
 
     try {
       return await this.salesRepository
-        .createQueryBuilder()
-        .update(Sales)
-        .set({ reviewId: reviewId })
-        .where({ id: salesId })
-        .execute();
-    } catch (e) {
-      console.log(e);
-      throw new UnauthorizedException('리뷰 id 업데이트 실패');
+      .createQueryBuilder()
+      .update(Sales)
+      .set({reviewId: reviewFind})
+      .where('id = :saleId',{salesId})
+      .andWhere('productId = :productId', {productId})
+      .andWhere('consumerId = :userId', {userId})
+      .execute()
     }
   }
 
-  async reviewInsert(userId, productId, salesId, content, star) {
+  async reviewFind(salesId, userId, productId) {
     try {
-      return await this.reviewRepository
+      return await this.salesRepository
         .createQueryBuilder()
-        .insert()
-        .into(Review)
-        .values({
-          userId: userId,
-          productId: productId,
-          salesId: salesId,
-          content: content,
-          star: star,
-        })
-        .execute();
+        .select('sale')
+        .from(Sales, 'sale')
+        .where('sale.id = :salesId', { salesId })
+        .andWhere('sale.productId = :productId', { productId })
+        .andWhere('sale.consumerId = :userId', { userId })
+        .leftJoin('sale.Review', 'review')
+        .getOne();
     } catch (e) {
       console.log(e);
-      throw new UnauthorizedException('리뷰 등록 실패');
+      throw new UnauthorizedException();
     }
   }
 }

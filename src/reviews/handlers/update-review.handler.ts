@@ -20,9 +20,9 @@ export class UpdateReviewHandler {
         .createQueryBuilder()
         .update(Review)
         .set({ content: content, star: star })
-        .where({ id: reviewId })
-        .andWhere({ userId: userId })
-        .andWhere({ productId: productId })
+        .where('id = :reviewId', { reviewId })
+        .andWhere('userId = :userId', { userId })
+        .andWhere('productId = :productId', { productId })
         .execute();
     } catch (e) {
       console.log(e);

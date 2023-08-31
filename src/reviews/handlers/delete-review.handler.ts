@@ -21,9 +21,9 @@ export class DeleteReviewHandler {
         .createQueryBuilder()
         .delete()
         .from(Review)
-        .where({ id: commentId })
-        .andWhere({ userId: userId })
-        .andWhere({ productId: productId })
+        .where('id = :commentId', { commentId })
+        .andWhere('userId = :userId', { userId })
+        .andWhere('productId = :productId', { productId })
         .execute();
     } catch (e) {
       console.log(e);

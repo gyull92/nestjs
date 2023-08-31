@@ -18,7 +18,7 @@ export class GetArticleListHandler {
         .createQueryBuilder()
         .select('articles.title')
         .from(Article, 'articles')
-        .getRawMany();
+        .getMany();
     } catch (e) {
       console.log(e);
       throw new UnauthorizedException('게시글 목록 불러오기 실패');

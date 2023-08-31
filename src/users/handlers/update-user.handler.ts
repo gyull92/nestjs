@@ -20,7 +20,7 @@ export class UpdateUserHandler {
         .createQueryBuilder()
         .update(User)
         .set({ name: name, phone: phone, address: address })
-        .where('id = :userId', { userId: userId })
+        .where('id = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('회원 정보 수정 실패');

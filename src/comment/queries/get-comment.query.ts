@@ -13,14 +13,14 @@ export class GetCommentHandler {
   ) {}
 
   async execute(command: GetCommentCommand) {
-    console.log(command);
     const { articleId } = command;
+
     try {
       return await this.commentRepository
         .createQueryBuilder()
         .select('comments')
         .from(Comment, 'comments')
-        .where({ articleId: articleId })
+        .where('comments.articleId = :articleId', { articleId })
         .getMany();
     } catch (e) {
       throw new UnauthorizedException('댓글 조회에 실패하였습니다');

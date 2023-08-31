@@ -20,8 +20,8 @@ export class UpdateArticleHandler {
         .createQueryBuilder()
         .update(Article)
         .set({ title: title, content: content, image: image })
-        .where({ id: articleId })
-        .andWhere({ userId: userId })
+        .where('id = :articleId', { articleId })
+        .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('게시글 수정에 실패하였습니다');

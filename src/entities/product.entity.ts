@@ -51,6 +51,6 @@ export class Product extends BaseEntity {
   @OneToMany(() => Review, (review) => review.Product)
   Review: Review[];
 
-  @ManyToMany(() => Sales, (sales) => sales.Product)
+  @OneToMany(() => Sales, (sales) => sales.Product)
   Sales: Sales[];
 }

@@ -18,9 +18,9 @@ export class DeleteCommentHandler {
         .createQueryBuilder()
         .delete()
         .from(Comment)
-        .where({ id: commentId })
-        .andWhere({ articleId: articleId })
-        .andWhere({ userId: userId })
+        .where('id = :commentId', { commentId })
+        .andWhere('articleId = :articleId', { articleId })
+        .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
       throw new UnauthorizedException('댓글 삭제에 실패하였습니다');

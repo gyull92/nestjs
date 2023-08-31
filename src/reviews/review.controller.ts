@@ -119,7 +119,6 @@ export class ReviewController {
   @Get('/myReviewList')
   async myReviewList(@Req() req) {
     const userId = req.user.userId;
-    console.log(userId, 3333333333333);
     return await this.queryBus.execute(new MyReviewListCommand(userId));
   }
 }

@@ -20,7 +20,7 @@ export class MyProductListHandler {
         .createQueryBuilder()
         .select('sale')
         .from(Sales, 'sale')
-        .where('sale.sellerId = :sellerId', { sellerId: userId })
+        .where('sale.sellerId = :userId', { userId })
         .getMany();
     } catch (e) {
       console.log(e);

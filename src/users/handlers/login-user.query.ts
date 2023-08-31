@@ -37,7 +37,7 @@ export class LoginedUserHandler {
         .createQueryBuilder()
         .select('users')
         .from(User, 'users')
-        .where('users.userId = :userId', { userId: userId })
+        .where('users.userId = :userId', { userId })
         .getOne();
     } catch (e) {
       throw new UnauthorizedException('로그인 실패');

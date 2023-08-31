@@ -20,7 +20,7 @@ export class GetArticleHandler {
         .createQueryBuilder()
         .select('articles.title, articles.content, articles.image')
         .from(Article, 'articles')
-        .where('articles.id = :articleId', { articleId: articleId })
+        .where('articles.id = :articleId', { articleId })
         .getRawOne();
     } catch (e) {
       throw new UnauthorizedException('게시글 조회에 실패하였습니다');
