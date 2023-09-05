@@ -2,24 +2,25 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserCommand } from './commands/create-user.command';
-import { LoginedUserDto } from './dtos/login-user.dto';
-import { UpdateUserDto } from './dtos/update-user.dto';
+import { SignInUserDto } from './dto/sign-in-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserCommand } from './commands/update-user.command';
-import { AuthGuard } from 'src/guard/auth.guard';
-import { PasswordChangeDto } from './dtos/password-change.dto';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { PasswordChangeDto } from './dto/password-change.dto';
 import { PasswordChangeCommand } from './commands/password-change.command';
-import { LoginedUserCommand } from './commands/login-user.command';
+import { SignInUserCommand } from './commands/sign-in-user.command';
 import { GetProfileCommand } from './commands/get-profile.command';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { GetMyOrderCommand } from './commands/get-my-order.command';
 
 @Controller('user')
@@ -31,18 +32,18 @@ export class UserController {
 
   @ApiTags('user')
   @ApiOperation({ summary: '로그인' })
-  @ApiBody({ type: LoginedUserDto })
-  @Post('/isLogin')
-  async loginUser(@Body() userInfo: LoginedUserCommand) {
+  @ApiBody({ type: SignInUserDto })
+  @Post('/entry')
+  async loginUser(@Body() userInfo: SignInUserCommand) {
     return this.commandBus.execute(
-      new LoginedUserCommand(userInfo.userId, userInfo.password),
+      new SignInUserCommand(userInfo.userId, userInfo.password),
     );
   }
 
   @ApiTags('user')
   @ApiOperation({ summary: '회원가입' })
   @ApiBody({ type: CreateUserDto })
-  @Post('/create')
+  @Post('/account')
   async createUser(@Body() createUserDto: CreateUserCommand) {
     return this.commandBus.execute(
       new CreateUserCommand(
@@ -60,7 +61,7 @@ export class UserController {
   @ApiBody({ type: UpdateUserDto })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Put('/update')
+  @Patch('/change')
   async updateUser(@Req() req, @Body() updateUserDto: UpdateUserCommand) {
     const userId = req.user.userId;
 

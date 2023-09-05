@@ -13,7 +13,7 @@ export class MyProductListHandler {
   ) {}
 
   async execute(command: MyProductListCommand) {
-    const { userId } = command;
+    const userId = command.userId;
 
     try {
       return await this.saleRepository

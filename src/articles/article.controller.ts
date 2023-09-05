@@ -3,27 +3,27 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Patch,
   Post,
-  Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetArticleCommand } from './commands/get-article.commnad';
+import { GetArticleCommand } from './commands/get-article.command';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { CreateArticleCommand } from './commands/create-article.command';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { UpdateArticleCommand } from './commands/update-article.command';
-import { DeleteArticleCommand } from './commands/delete-article.commnad';
+import { DeleteArticleCommand } from './commands/delete-article.command';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { GetArticleListCommand } from './commands/get-article-list.command';
 
 @Controller('article')
@@ -42,9 +42,9 @@ export class ArticleController {
 
   @ApiTags('article')
   @ApiOperation({ summary: '게시글 조회' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
-  @Get('/:articleId')
-  async getArticle(@Param('articleId') articleId) {
+  @ApiQuery({ name: 'articleId', example: 1, description: '조회할 게시글 id' })
+  @Get('/articleDetail')
+  async getArticle(@Query('articleId') articleId: number) {
     return await this.queryBus.execute(new GetArticleCommand(articleId));
   }
 
@@ -53,7 +53,7 @@ export class ArticleController {
   @ApiBody({ type: CreateArticleDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('/createArticle')
+  @Post('/create')
   async createArticle(@Req() req, @Body() articleInfo: CreateArticleCommand) {
     const userId = req.user.userId;
     return await this.commandBus.execute(
@@ -68,14 +68,14 @@ export class ArticleController {
 
   @ApiTags('article')
   @ApiOperation({ summary: '게시글 수정' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
+  @ApiQuery({ name: 'articleId', example: 1, description: '수정할 게시글 id' })
   @ApiBody({ type: UpdateArticleDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put('/updateArticle/:articleId')
+  @Patch('/update')
   async updateArticle(
     @Req() req,
-    @Param('articleId') articleId,
+    @Query('articleId') articleId: number,
     @Body() articleInfo: UpdateArticleCommand,
   ) {
     const userId = req.user.userId;
@@ -92,11 +92,11 @@ export class ArticleController {
 
   @ApiTags('article')
   @ApiOperation({ summary: '게시글 삭제' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
+  @ApiQuery({ name: 'articleId', example: 1, description: '삭제할 게시글 id' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete('/deleteArticle/:articleId')
-  async deleteArticle(@Req() req, @Param('articleId') articleId) {
+  @Delete()
+  async deleteArticle(@Req() req, @Query('articleId') articleId: number) {
     const userId = req.user.userId;
     return await this.commandBus.execute(
       new DeleteArticleCommand(userId, articleId),

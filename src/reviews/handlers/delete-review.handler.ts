@@ -13,15 +13,14 @@ export class DeleteReviewHandler {
   ) {}
 
   async execute(command: DeleteReviewCommand) {
-    console.log(command);
-    const { userId, productId, commentId } = command;
+    const { userId, productId, reviewId } = command;
 
     try {
       return await this.reviewRepository
         .createQueryBuilder()
-        .delete()
+        .softDelete()
         .from(Review)
-        .where('id = :commentId', { commentId })
+        .where('id = :reviewId', { reviewId })
         .andWhere('userId = :userId', { userId })
         .andWhere('productId = :productId', { productId })
         .execute();

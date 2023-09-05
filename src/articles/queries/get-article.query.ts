@@ -1,5 +1,5 @@
 import { QueryHandler } from '@nestjs/cqrs';
-import { GetArticleCommand } from '../commands/get-article.commnad';
+import { GetArticleCommand } from '../commands/get-article.command';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from 'src/entities/articles.entity';
 import { Repository } from 'typeorm';
@@ -13,7 +13,7 @@ export class GetArticleHandler {
   ) {}
 
   async execute(command: GetArticleCommand) {
-    const { articleId } = command;
+    const articleId = command.articleId;
 
     try {
       return await this.articleRepository

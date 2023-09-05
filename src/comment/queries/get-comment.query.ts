@@ -13,7 +13,7 @@ export class GetCommentHandler {
   ) {}
 
   async execute(command: GetCommentCommand) {
-    const { articleId } = command;
+    const articleId = command.articleId;
 
     try {
       return await this.commentRepository

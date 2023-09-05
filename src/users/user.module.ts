@@ -9,7 +9,7 @@ import { jwtConfigService } from 'src/config/jwt.config';
 import { CreateUserHandler } from './handlers/create-user.handler';
 import { PasswordChangeHandler } from './handlers/password-change.handler';
 import { UpdateUserHandler } from './handlers/update-user.handler';
-import { LoginedUserHandler } from './handlers/login-user.query';
+import { SignInUserHandler } from './handlers/sign-in-user.query';
 import { GetProfileHandler } from './queries/get-profile.query';
 import { GetMyOrderHandler } from './queries/get-my-order.query';
 
@@ -26,7 +26,7 @@ import { GetMyOrderHandler } from './queries/get-my-order.query';
   controllers: [UserController],
   providers: [
     CreateUserHandler,
-    LoginedUserHandler,
+    SignInUserHandler,
     PasswordChangeHandler,
     UpdateUserHandler,
     GetProfileHandler,

@@ -14,6 +14,7 @@ export class CreateCommentHandler {
 
   async execute(command: CreateCommentCommand) {
     const { userId, articleId, content } = command;
+
     try {
       return await this.commentRepository
         .createQueryBuilder()

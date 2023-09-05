@@ -13,15 +13,15 @@ export class GetReviewHandler {
   ) {}
 
   async execute(command: GetReviewCommand) {
-    const { productId } = command;
+    const productId = command.productId;
 
     try {
       return await this.reviewRepository
         .createQueryBuilder()
         .select('reviews')
         .from(Review, 'reviews')
-        .where('reviews.productId = :productId',{ productId })
-        .execute();
+        .where('reviews.productId = :productId', { productId })
+        .getMany();
     } catch (e) {
       console.log(e);
       throw new UnauthorizedException('리뷰 조회 실패');

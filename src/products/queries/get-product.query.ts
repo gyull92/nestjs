@@ -13,14 +13,14 @@ export class GetProductHandler {
   ) {}
 
   async execute(command: GetProductCommand) {
-    const { productId } = command;
+    const productId = command.productId;
 
     try {
       return await this.productRepository
         .createQueryBuilder()
         .select('products')
         .from(Product, 'products')
-        .where('id = :productId', { productId })
+        .where('products.id = :productId', { productId })
         .getOne();
     } catch (e) {
       throw new UnauthorizedException('상품 조회 실패');

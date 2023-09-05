@@ -1,16 +1,26 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { SalesListCommand } from './commands/sales-list.command';
 import { BuyProductCommand } from './commands/buy-product.command';
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { MyProductListCommand } from './commands/my-product-list.command';
 import { SaleItemDetailCommand } from './commands/sale-item-detail.command';
+import { StarCountCommand } from './commands/star-count-command';
+import RoleGuard from 'src/auth/guard/roles.guard';
+import Role from 'src/entities/enum/user.role.enum';
 
 @Controller('sales')
 export class SalesController {
@@ -31,11 +41,11 @@ export class SalesController {
 
   @ApiTags('sales')
   @ApiOperation({ summary: '상품구매' })
-  @ApiParam({ name: 'productId', description: '상품 id', example: '1' })
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('/buyItem/:productId')
-  async buyItem(@Req() req, @Param('productId') productId) {
+  @Post('/buyItem')
+  async buyItem(@Req() req, @Query('productId') productId: number) {
     const userId = req.user.userId;
     return await this.commandBus.execute(
       new BuyProductCommand(userId, productId),
@@ -54,14 +64,25 @@ export class SalesController {
 
   @ApiTags('sales')
   @ApiOperation({ summary: '판매 상세 정보' })
-  @ApiParam({ name: 'saleId', example: '1', description: '판매 번호' })
+  @ApiQuery({ name: 'saleId', example: 1, description: '판매 id' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get('/saleItemDetail/:saleId')
-  async saleItemDetail(@Req() req, @Param('saleId') saleId) {
+  @Get('/saleItemDetail')
+  async saleItemDetail(@Req() req, @Query('saleId') saleId: number) {
     const userId = req.user.userId;
     return await this.queryBus.execute(
       new SaleItemDetailCommand(userId, saleId),
     );
+  }
+
+  @ApiTags('sales')
+  @ApiOperation({ summary: '상품별 별점 조회' })
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
+  @ApiBearerAuth()
+  @UseGuards(RoleGuard(Role.Seller))
+  @Get('/starCount')
+  async starCount(@Req() req, @Query('productId') productId: number) {
+    const userId = req.user.userId;
+    return await this.queryBus.execute(new StarCountCommand(userId, productId));
   }
 }

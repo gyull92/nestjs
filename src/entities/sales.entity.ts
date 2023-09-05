@@ -5,10 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -51,7 +48,7 @@ export class Sales extends BaseEntity {
   @JoinColumn({ name: 'productId', referencedColumnName: 'id' })
   Product: Product[];
 
-  @OneToOne(() => Review, (review) => review.Sales)
+  @OneToOne(() => Review, (review) => review.Sales, { cascade: true })
   @JoinColumn({ name: 'reviewId', referencedColumnName: 'id' })
   Review: Review;
 }

@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,6 +13,7 @@ import { Comment } from './comment.entity';
 import { Product } from './product.entity';
 import { Review } from './review.entity';
 import { Sales } from './sales.entity';
+import Role from './enum/user.role.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -35,8 +35,8 @@ export class User extends BaseEntity {
   @Column()
   address: string;
 
-  @Column({ default: 0 })
-  role: number;
+  @Column('enum', { enum: Role, default: Role.User })
+  role: Role;
 
   @Column({ default: 30000 })
   point: number;

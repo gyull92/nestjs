@@ -52,5 +52,6 @@ export class Review extends BaseEntity {
   Product: Product;
 
   @OneToOne(() => Sales, (sales) => sales.Review)
+  @JoinColumn({ name: 'salesId', referencedColumnName: 'id' })
   Sales: Sales;
 }

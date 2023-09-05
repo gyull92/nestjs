@@ -2,7 +2,7 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { CreateReviewCommand } from '../commands/create-review.command';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/entities/review.entity';
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UnauthorizedException } from '@nestjs/common';
 import { Sales } from 'src/entities/sales.entity';
 
@@ -12,62 +12,73 @@ export class CreateReviewHandler {
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Sales)
-    private readonly salesRepository: Repository<Sales>,
-    private readonly connection: Connection,
+    private readonly saleRepository: Repository<Sales>,
   ) {}
 
   async execute(command: CreateReviewCommand) {
     const { userId, productId, salesId, content, star } = command;
-    const reviewFind = await this.reviewFind(salesId, userId, productId);
 
-    if (reviewFind.reviewId == null) {
-      try {
-        return await this.reviewRepository
-          .createQueryBuilder()
-          .insert()
-          .into(Review)
-          .values({
-            content: content,
-            star: star,
-            salesId: salesId,
-            productId: productId,
-            userId: userId,
-          })
-          .execute();
-      } catch (e) {
-        console.log(e);
-        throw new UnauthorizedException();
-      }
-    } else {
-      throw new UnauthorizedException('이미 리뷰룰 작성하였습니다');
-    }
+    const reviewInsert = this.reviewInsert(
+      userId,
+      productId,
+      salesId,
+      content,
+      star,
+    );
+
+    const reviewId = (await reviewInsert).raw.insertId;
 
     try {
-      return await this.salesRepository
-      .createQueryBuilder()
-      .update(Sales)
-      .set({reviewId: reviewFind})
-      .where('id = :saleId',{salesId})
-      .andWhere('productId = :productId', {productId})
-      .andWhere('consumerId = :userId', {userId})
-      .execute()
-    }
-  }
-
-  async reviewFind(salesId, userId, productId) {
-    try {
-      return await this.salesRepository
+      return await this.saleRepository
         .createQueryBuilder()
-        .select('sale')
-        .from(Sales, 'sale')
-        .where('sale.id = :salesId', { salesId })
-        .andWhere('sale.productId = :productId', { productId })
-        .andWhere('sale.consumerId = :userId', { userId })
-        .leftJoin('sale.Review', 'review')
-        .getOne();
+        .update(Sales)
+        .set({ reviewId: reviewId })
+        .where('id = :salesId', { salesId })
+        .andWhere('consumerId = :userId', { userId })
+        .andWhere('productId = :productId', { productId })
+        .execute();
     } catch (e) {
       console.log(e);
       throw new UnauthorizedException();
+    }
+
+    // try {
+    //   return await this.reviewRepository
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Review)
+    //     .values({
+    //       content: content,
+    //       star: star,
+    //       salesId: salesId,
+    //       productId: productId,
+    //       userId: userId,
+    //     })
+    //     .execute();
+    // } catch (e) {
+    //   console.log(e);
+    //   throw new UnauthorizedException('이미 리뷰를 작성하였습니다');
+    // }
+    // }
+  }
+
+  async reviewInsert(userId, productId, saleId, content, star) {
+    try {
+      return await this.reviewRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Review)
+        .values({
+          content: content,
+          star: star,
+          salesId: saleId,
+          productId: productId,
+          userId: userId,
+        })
+        .execute();
+    } catch (e) {
+      console.log(e);
+      throw new UnauthorizedException('이미 리뷰작성을 완료하였습니다');
     }
   }
 }

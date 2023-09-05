@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class LoginedUserDto {
+export class SignInUserDto {
   @ApiPropertyOptional({ description: '아이디', example: 'orange' })
   @IsString()
   @IsNotEmpty()

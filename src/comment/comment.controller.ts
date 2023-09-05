@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Patch,
   Post,
-  Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -18,11 +18,11 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { DeleteCommentCommand } from './commands/delete-comment.command';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { GetCommentCommand } from './commands/get-comment.command';
 
 @Controller('comment')
@@ -34,23 +34,22 @@ export class CommentController {
 
   @ApiTags('comment')
   @ApiOperation({ summary: '댓글 조회' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
-  @Get('/:articleId')
-  async getComment(@Param('articleId') articleId) {
-    console.log(articleId);
+  @ApiQuery({ name: 'articleId', example: 1, description: '조회할 게시글 id' })
+  @Get()
+  async getComment(@Query('articleId') articleId: number) {
     return await this.queryBus.execute(new GetCommentCommand(articleId));
   }
 
   @ApiTags('comment')
   @ApiOperation({ summary: '댓글 작성' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
+  @ApiQuery({ name: 'articleId', example: 1, description: '원문 게시글 id' })
   @ApiBody({ type: CreateCommentDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('/createComment/:articleId')
+  @Post('/create')
   async createComment(
     @Req() req,
-    @Param('articleId') articleId,
+    @Query('articleId') articleId: number,
     @Body() commentInfo: CreateCommentCommand,
   ) {
     const userId = req.user.userId;
@@ -61,16 +60,16 @@ export class CommentController {
 
   @ApiTags('comment')
   @ApiOperation({ summary: '댓글 수정' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
-  @ApiParam({ name: 'commentId', description: '댓글 id' })
+  @ApiQuery({ name: 'articleId', example: 1, description: '원문 게시글 id' })
+  @ApiQuery({ name: 'commentId', example: 1, description: '수정할 댓글 id' })
   @ApiBody({ type: UpdateCommentDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put('/updateComment/:articleId/:commentId')
+  @Patch('/update')
   async updateComment(
     @Req() req,
-    @Param('articleId') articleId,
-    @Param('commentId') commentId,
+    @Query('articleId') articleId: number,
+    @Query('commentId') commentId: number,
     @Body() commentInfo: UpdateCommentCommand,
   ) {
     const userId = req.user.userId;
@@ -86,15 +85,15 @@ export class CommentController {
 
   @ApiTags('comment')
   @ApiOperation({ summary: '댓글삭제' })
-  @ApiParam({ name: 'articleId', description: '게시글 id' })
-  @ApiParam({ name: 'commentId', description: '댓글 id' })
+  @ApiQuery({ name: 'articleId', example: 1, description: '원문 게시글 id' })
+  @ApiQuery({ name: 'commentId', example: 1, description: '삭제할 댓글 id' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete('/deleteComment/:articleId/:commentId')
+  @Delete()
   async DeleteCommentCommand(
     @Req() req,
-    @Param('articleId') articleId,
-    @Param('commentId') commentId,
+    @Query('articleId') articleId: number,
+    @Query('commentId') commentId: number,
   ) {
     const userId = req.user.userId;
     return await this.commandBus.execute(

@@ -9,7 +9,7 @@ import { ArticleModule } from './articles/article.module';
 import { CommentModule } from './comment/comment.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfigService } from './config/jwt.config';
-import { JwtStrategy } from './strategy/jwt.strategy';
+import { JwtStrategy } from './auth/strategy/jwt.strategy';
 import { ProductModule } from './products/product.module';
 import { ReviewModule } from './reviews/review.module';
 import { SalesModule } from './sales/sales.module';

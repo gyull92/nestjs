@@ -28,6 +28,7 @@ export class PostProductHandler {
         })
         .execute();
     } catch (e) {
+      console.log(e);
       throw new UnauthorizedException('상품 등록 실패');
     }
   }

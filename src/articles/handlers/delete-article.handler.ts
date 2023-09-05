@@ -1,5 +1,5 @@
 import { CommandHandler } from '@nestjs/cqrs';
-import { DeleteArticleCommand } from '../commands/delete-article.commnad';
+import { DeleteArticleCommand } from '../commands/delete-article.command';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from 'src/entities/articles.entity';
 import { Repository } from 'typeorm';
@@ -14,6 +14,7 @@ export class DeleteArticleHandler {
 
   async execute(command: DeleteArticleCommand) {
     const { userId, articleId } = command;
+
     try {
       return await this.articleRepository
         .createQueryBuilder()

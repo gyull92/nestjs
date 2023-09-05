@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Patch,
   Post,
-  Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -14,18 +14,17 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateReviewCommand } from './commands/create-review.command';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewCommand } from './commands/update-review.command';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { DeleteReviewCommand } from './commands/delete-review.command';
 import { GetReviewCommand } from './commands/get-review.command';
 import { MyReviewListCommand } from './commands/my-review.list.command';
-import { jwtConfigService } from 'src/config/jwt.config';
 
 @Controller('review')
 export class ReviewController {
@@ -36,24 +35,24 @@ export class ReviewController {
 
   @ApiTags('review')
   @ApiOperation({ summary: '리뷰조회' })
-  @ApiParam({ name: 'productId', example: '1' })
-  @Get('/getReview/:productId')
-  async getReview(@Param('productId') productId) {
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
+  @Get()
+  async getReview(@Query('productId') productId: number) {
     return await this.queryBus.execute(new GetReviewCommand(productId));
   }
 
   @ApiTags('review')
   @ApiOperation({ summary: '리뷰작성' })
-  @ApiParam({ name: 'productId', example: '1', description: '상품 id' })
-  @ApiParam({ name: 'salesId', example: '1', description: '판매 id' })
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
+  @ApiQuery({ name: 'salesId', example: 1, description: '판매 id' })
   @ApiBody({ type: CreateReviewDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('/createReview/:productId/:salesId')
+  @Post('/create')
   async createReview(
     @Req() req,
-    @Param('productId') productId,
-    @Param('salesId') salesId,
+    @Query('productId') productId: number,
+    @Query('salesId') salesId: number,
     @Body() reviewInfo: CreateReviewCommand,
   ) {
     const userId = req.user.userId;
@@ -70,16 +69,16 @@ export class ReviewController {
 
   @ApiTags('review')
   @ApiOperation({ summary: '리뷰수정' })
-  @ApiParam({ name: 'productId', example: '1', description: '상품 id' })
-  @ApiParam({ name: 'reviewId', example: '1', description: '리뷰 id' })
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
+  @ApiQuery({ name: 'reviewId', example: 1, description: '리뷰 id' })
   @ApiBody({ type: UpdateReviewDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put('/updateReview/:productId/:reviewId')
+  @Patch('/update')
   async updateReview(
     @Req() req,
-    @Param('productId') productId,
-    @Param('reviewId') reviewId,
+    @Query('productId') productId: number,
+    @Query('reviewId') reviewId: number,
     @Body() reviewInfo: UpdateReviewCommand,
   ) {
     const userId = req.user.userId;
@@ -96,19 +95,19 @@ export class ReviewController {
 
   @ApiTags('review')
   @ApiOperation({ summary: '리뷰 삭제' })
-  @ApiParam({ name: 'productId', example: '1', description: '상품 id' })
-  @ApiParam({ name: 'commentId', example: '1', description: '댓글 id' })
+  @ApiQuery({ name: 'productId', example: 1, description: '상품 id' })
+  @ApiQuery({ name: 'reviewId', example: 1, description: '리뷰 id' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete('/deleteReview/:productId/:commentId')
+  @Delete()
   async deleteReview(
     @Req() req,
-    @Param('productId') productId,
-    @Param('commentId') commentId,
+    @Query('productId') productId: number,
+    @Query('reviewId') reviewId: number,
   ) {
     const userId = req.user.userId;
     return await this.commandBus.execute(
-      new DeleteReviewCommand(userId, productId, commentId),
+      new DeleteReviewCommand(userId, productId, reviewId),
     );
   }
 

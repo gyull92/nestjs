@@ -13,6 +13,7 @@ export class DeleteCommentHandler {
 
   async execute(command: DeleteCommentCommand) {
     const { userId, articleId, commentId } = command;
+
     try {
       return await this.commentRepository
         .createQueryBuilder()

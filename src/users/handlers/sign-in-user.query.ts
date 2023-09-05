@@ -5,17 +5,17 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginedUserCommand } from '../commands/login-user.command';
+import { SignInUserCommand } from '../commands/sign-in-user.command';
 
-@CommandHandler(LoginedUserCommand)
-export class LoginedUserHandler {
+@CommandHandler(SignInUserCommand)
+export class SignInUserHandler {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(userInfo: LoginedUserCommand) {
+  async execute(userInfo: SignInUserCommand) {
     const { userId, password } = userInfo;
     const userData = await this.userData(userId);
     const isMatch = await bcrypt.compare(password, userData.password);
@@ -24,7 +24,7 @@ export class LoginedUserHandler {
       throw new UnauthorizedException('ID 혹은 비밀번호가 틀립니다.');
     }
 
-    const payload = { userId: userData.id };
+    const payload = { userId: userData.id, role: userData.role };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
